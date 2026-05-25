@@ -1,0 +1,10 @@
+/dist
+/node_modules
+/build
+/coverage
+.DS_Store
+.env
+.env.*
+!.env.example
+.serverless/
+*.log
