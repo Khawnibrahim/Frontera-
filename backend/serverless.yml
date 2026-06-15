@@ -7,21 +7,55 @@ provider:
   name: aws
   runtime: nodejs22.x
   stage: ${opt:stage, 'dev'}
-  region: ${env:AWS_REGION, 'us-east-1'}
+  region: ${env:FRONTERA_AWS_REGION, 'us-east-1'}
   timeout: 60
   memorySize: 1024
   httpApi:
     payload: '2.0'
+    # Browser calls from Vite (localhost:8080) or the portal need preflight at API Gateway.
+    cors:
+      allowedOrigins:
+        - http://localhost:8080
+        - http://localhost:5173
+        - http://127.0.0.1:8080
+        - http://127.0.0.1:5173
+        # Lovable / hosted portal (origin only — no path); add production domain when live
+        - https://id-preview--128edd29-a6a6-490c-a898-4d428991ac14.lovable.app
+      allowedHeaders:
+        - Content-Type
+        - Authorization
+        - Accept
+      allowedMethods:
+        - GET
+        - POST
+        - PUT
+        - PATCH
+        - DELETE
+        - OPTIONS
+      maxAge: 86400
   environment:
     NODE_ENV: production
     DATABASE_URL: ${env:DATABASE_URL}
     SUPABASE_URL: ${env:SUPABASE_URL, ''}
     SUPABASE_JWT_SECRET: ${env:SUPABASE_JWT_SECRET, ''}
+    SUPABASE_SERVICE_ROLE_KEY: ${env:SUPABASE_SERVICE_ROLE_KEY, ''}
+    # Temporary: open API for end-to-end testing; set false before production.
+    AUTH_DISABLED: ${env:AUTH_DISABLED, 'true'}
     DOCUMENTS_BUCKET: ${self:custom.documentsBucketName}
     EXPORTS_BUCKET: ${self:custom.exportsBucketName}
-    AWS_REGION: ${self:provider.region}
+    FRONTERA_AWS_REGION: ${self:provider.region}
     SES_FROM_EMAIL: ${self:custom.sesFromEmail}
     SES_CONFIGURATION_SET: ${self:custom.sesConfigurationSetName, ''}
+    FRONTERA_APP_URL: ${env:FRONTERA_APP_URL, ''}
+    # Auto-derived from API Gateway on deploy — invite emails must hit Nest /accept-invite, not the portal.
+    FRONTERA_API_PUBLIC_URL:
+      Fn::Join:
+        - ''
+        - - 'https://'
+          - Ref: HttpApi
+          - '.execute-api.'
+          - Ref: AWS::Region
+          - '.amazonaws.com'
   iam:
     role:
       statements:
@@ -32,6 +66,7 @@ provider:
           Resource: '*'
         - Effect: Allow
           Action:
+            - s3:PutObject
             - s3:GetObject
           Resource:
             - arn:aws:s3:::${self:custom.documentsBucketName}/*
@@ -59,7 +94,7 @@ package:
 
 functions:
   api:
-    handler: dist/lambda.handler
+    handler: dist/src/lambda.handler
     timeout: 300
     events:
       - httpApi:
@@ -100,6 +135,16 @@ resources:
         EmailIdentity: ${self:custom.sesFromEmail}
 
   Outputs:
+    ApiUrl:
+      Description: Public API base URL (invite emails and Swagger)
+      Value:
+        Fn::Join:
+          - ''
+          - - 'https://'
+            - Ref: HttpApi
+            - '.execute-api.'
+            - Ref: AWS::Region
+            - '.amazonaws.com'
     DocumentsBucketName:
       Value: ${self:custom.documentsBucketName}
     ExportsBucketName:

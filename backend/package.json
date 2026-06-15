@@ -15,7 +15,18 @@
     "db:migrate": "ts-node scripts/run-migrate.ts",
     "db:studio": "drizzle-kit studio",
     "db:seed": "ts-node scripts/seed-test-data.ts",
+    "db:seed:catalog": "ts-node scripts/seed-onboarding-catalog.ts",
+    "db:seed:all": "npm run db:seed:catalog && npm run db:seed",
+    "db:seed:dev-logins": "ts-node scripts/seed-dev-logins.ts",
+    "db:grants": "ts-node scripts/run-authenticated-grants.ts",
+    "db:repair-invite-auth": "ts-node scripts/repair-invite-auth.ts",
     "deploy": "bash scripts/deploy.sh",
+    "docker:up": "docker compose up --build",
+    "docker:up:detach": "docker compose up --build -d",
+    "docker:down": "docker compose down",
+    "docker:reset": "docker compose down -v && docker compose up --build",
+    "docker:db": "docker compose up postgres -d",
+    "docker:rebuild": "docker compose build api --no-cache",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
     "start:dev": "nest start --watch",
@@ -24,12 +35,14 @@
     "lint": "eslint \"{src,test}/**/*.ts\" --fix",
     "test": "jest",
     "test:watch": "jest --watch",
-    "test:e2e": "jest --config ./test/jest-e2e.json"
+    "test:e2e": "jest --config ./test/jest-e2e.json",
+    "openapi:generate": "ts-node scripts/generate-openapi.ts"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1044.0",
     "@aws-sdk/client-ses": "^3.1044.0",
     "@aws-sdk/client-sqs": "^3.1045.0",
+    "@aws-sdk/s3-request-presigner": "^3.1066.0",
     "@nestjs/common": "^11.0.1",
     "@nestjs/config": "^4.0.4",
     "@nestjs/core": "^11.0.1",
@@ -39,6 +52,8 @@
     "class-transformer": "^0.5.1",
     "class-validator": "^0.15.1",
     "drizzle-orm": "^0.45.2",
+    "exceljs": "^4.4.0",
+    "jose": "^6.2.3",
     "pg": "^8.20.0",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
@@ -53,6 +68,7 @@
     "@types/aws-lambda": "^8.10.161",
     "@types/express": "^5.0.0",
     "@types/jest": "^30.0.0",
+    "@types/js-yaml": "^4.0.9",
     "@types/node": "^24.0.0",
     "@types/pg": "^8.20.0",
     "@types/supertest": "^7.0.0",
@@ -62,6 +78,7 @@
     "eslint-plugin-prettier": "^5.2.2",
     "globals": "^17.0.0",
     "jest": "^30.0.0",
+    "js-yaml": "^4.2.0",
     "prettier": "^3.4.2",
     "serverless": "^3.40.0",
     "source-map-support": "^0.5.21",
@@ -74,14 +91,23 @@
     "typescript-eslint": "^8.20.0"
   },
   "jest": {
-    "moduleFileExtensions": ["js", "json", "ts"],
+    "moduleFileExtensions": [
+      "js",
+      "json",
+      "ts"
+    ],
     "rootDir": "src",
     "testRegex": ".*\\.spec\\.ts$",
     "transform": {
       "^.+\\.(t|j)s$": "ts-jest"
     },
-    "collectCoverageFrom": ["**/*.(t|j)s"],
+    "collectCoverageFrom": [
+      "**/*.(t|j)s"
+    ],
     "coverageDirectory": "../coverage",
-    "testEnvironment": "node"
+    "testEnvironment": "node",
+    "transformIgnorePatterns": [
+      "node_modules/(?!(jose)/)"
+    ]
   }
 }
