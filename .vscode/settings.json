@@ -1,0 +1,10 @@
+{
+  "git.showIgnored": false,
+  "explorer.excludeGitIgnore": true,
+  "scm.exclude": {
+    "**/node_modules": true,
+    "**/dist": true,
+    "**/.serverless": true,
+    "**/coverage": true
+  }
+}
