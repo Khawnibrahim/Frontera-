@@ -24,7 +24,7 @@ Persistence lives under `src/repository/persistence/`:
 
 If a service needs Postgres, it goes through a repository. No raw SQL in services.
 
-**AWS:** `serverless.yml` provisions S3 buckets, SES identity + IAM, and Lambda env (`SES_FROM_EMAIL`, `SES_CONFIGURATION_SET`). Email sends go through `src/repository/aws/ses.gateway.ts` (`TOKENS.SesGateway`) — not `new SESClient()` in domain services. S3 gateway for PACR/exports still to be added; buckets and read IAM are on the Lambda role.
+**AWS:** `serverless.yml` provisions S3 buckets, SES identity + IAM, and Lambda env (`SES_FROM_EMAIL`, `SES_CONFIGURATION_SET`). Email sends go through `src/repository/aws/ses.gateway.ts` (`TOKENS.SesGateway`) — not `new SESClient()` in domain services. S3 gateway for PACR uploads uses `DOCUMENTS_BUCKET`; Lambda IAM allows `PutObject`/`GetObject` on documents and exports buckets (`serverless.yml`).
 
 ### Scheduling module
 
@@ -37,7 +37,7 @@ If a service needs Postgres, it goes through a repository. No raw SQL in service
 | Q3 | `approve-request`, `deny-request`, corporate review queue, liaison email (SES) |
 | Q4 | `finalize-month`, `export-master-calendar`, downstream read APIs |
 
-Today: `AdminSchedulingController` exposes `GET /admin/scheduling/review-queue` — pending `time_off_requests` with `status = pending_review`. Provider onboarding lives under `admin/onboarding` (`OnboardingModule`, separate from scheduling). Q3 adds filters, warning flags, and approve/deny on the admin scheduling paths.
+Today (screen-backed routes only): `GET /admin/providers/*`, `GET|POST /admin/onboarding/*`, `GET /admin/master-availability/*`, `GET|POST /admin/schedule-change-approvals/*`, `GET /admin/prn-availability/*`; provider Screen 1 — `/provider/:providerId/*` ([0009](./docs/adr/0009-provider-availability-calendar.md)). No route guards yet (centralized JWT later).
 
 Controllers stay thin; business rules and orchestration live in services; persistence stays in repositories.
 
@@ -45,11 +45,11 @@ Controllers stay thin; business rules and orchestration live in services; persis
 
 Unlike QuoteLogik's OCR/LLM pipelines, the current Frontera API is **synchronous HTTP**: read/write Postgres in the request path. Long-running work in later phases (bulk export generation, heavy email batches) should follow enqueue → **202 Accepted** → consumer Lambda when SQS handlers are added — don't block the API Lambda beyond its timeout (`serverless.yml` sets API timeout to 300s; keep hot paths fast).
 
-Local `npm run start:dev` and deployed Lambda share the same `createApp()` bootstrap; both talk to the real Supabase database configured in `DATABASE_URL`. There is no local DB mock.
+Local `npm run start:dev` and deployed Lambda share the same `createApp()` bootstrap. **Docker:** `npm run docker:up` runs Postgres 16 + migrate/seed + API — see [docs/docker.md](./docs/docker.md). Only `./src` is bind-mounted; rebuild the `api` image after dependency changes. Or use cloud Supabase via `DATABASE_URL`. SSL is auto-disabled for `localhost` / Docker hostname `postgres` (`DATABASE_SSL=false` optional).
 
 ### Auth (Q1)
 
-Supabase Auth: JWT validation via `SUPABASE_URL` / `SUPABASE_JWT_SECRET` (or JWKS). Guard module is planned Q1; until it ships, routes are open in dev — don't assume auth is enforced when testing locally.
+**Supabase Auth issues the JWT; Nest verifies it** on each request (`Authorization: Bearer <access_token>`). Not a separate Frontera login — see [docs/api-auth.md](./docs/api-auth.md). Validation via `SUPABASE_JWT_SECRET` or JWKS from `SUPABASE_URL`. Guard module is planned Q1; until it ships, routes are open in dev — don't assume auth is enforced when testing locally.
 
 Row-level security and helper functions (`has_role`, `get_user_org_ids`, `is_assigned_to`, `log_audit`) live in `drizzle/0001_supabase_rls_functions.sql` and run in Supabase Postgres. The Nest app uses a service-role or pooler connection; respect org/site scoping in repository queries when the guard is live.
 

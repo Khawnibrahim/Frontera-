@@ -1,18 +1,16 @@
 # CLAUDE.md
 
-Guidance for AI agents working in this repo. **Read `../CONTEXT.md` (workspace) and `../AGENTS.md` first — they are the source of truth for domain vocabulary and the FE↔BE relationship.** This file covers backend stack conventions only.
+Guidance for AI agents working in the backend. **Read `./CONTEXT.md` first** for domain vocabulary and stack architecture.
 
 Reading order:
 
-1. `../CONTEXT.md` (workspace) — canonical domain glossary
-2. `../AGENTS.md` (workspace) — orientation, cross-repo rules
-3. `./CONTEXT.md` (this repo) — backend stack addenda
+1. `./CONTEXT.md` — domain glossary and backend architecture
 4. `./CLAUDE.md` (this file) — Nest/Drizzle/AWS conventions, feedback loops
-5. `../docs/adr/` and `./docs/adr/` — decisions
+5. `./docs/adr/` — decisions
 
 ## What this is
 
-QuoteLogik backend — a NestJS 11 + TypeScript service. Owns extraction, scoring, finding generation, report assembly. See `../CONTEXT.md` for what the product is and `./CONTEXT.md` for the backend-specific architecture (event-driven OCR pipeline, quote-generation pipeline, quoting module structure).
+Frontera Scheduling API — NestJS 11 + TypeScript. See `./CONTEXT.md` for product and architecture.
 
 ## Stack conventions
 
@@ -64,4 +62,4 @@ Defaults: `needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, `w
 
 ### Domain docs
 
-Multi-context. Canonical glossary at `../CONTEXT.md` (workspace), backend stack addenda at `./CONTEXT.md`. Workspace ADRs at `../docs/adr/`, backend-only ADRs at `./docs/adr/`. See `docs/agents/domain.md` for full read order.
+Multi-context. Backend stack addenda at `./CONTEXT.md`. ADRs at `./docs/adr/`. See `docs/agents/domain.md` for full read order.

@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Scalemorph — Frontera Developer Onboarding</title>
+  <style>
+    :root {
+      --ink: #1a1a2e;
+      --muted: #4a5568;
+      --accent: #0d9488;
+      --accent-light: #f0fdfa;
+      --border: #e2e8f0;
+      --success: #059669;
+      --warn: #d97706;
+      --page-bg: #ffffff;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+      font-size: 11pt;
+      line-height: 1.55;
+      color: var(--ink);
+      background: #f1f5f9;
+      padding: 2rem;
+    }
+    .document {
+      max-width: 210mm;
+      margin: 0 auto;
+      background: var(--page-bg);
+      padding: 18mm 20mm;
+      box-shadow: 0 4px 24px rgba(0,0,0,.08);
+    }
+    .cover {
+      text-align: center;
+      padding: 28mm 0 18mm;
+      border-bottom: 3px solid var(--accent);
+      margin-bottom: 2rem;
+      page-break-after: always;
+    }
+    .cover .logo { font-size: 13pt; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); font-weight: 700; }
+    .cover h1 { font-size: 24pt; margin: 1rem 0 .5rem; line-height: 1.2; }
+    .cover .project { font-size: 14pt; color: var(--muted); margin-bottom: .5rem; }
+    .cover .subtitle { font-size: 11.5pt; color: var(--muted); max-width: 34em; margin: 0 auto 2rem; }
+    .cover .meta { font-size: 10pt; color: var(--muted); }
+    .cover .meta span { display: inline-block; margin: 0 .75rem; }
+    h2 {
+      font-size: 16pt; color: var(--accent);
+      margin: 2rem 0 .75rem; padding-bottom: .35rem;
+      border-bottom: 2px solid var(--border);
+      page-break-after: avoid;
+    }
+    h3 { font-size: 12pt; margin: 1.25rem 0 .5rem; page-break-after: avoid; }
+    h4 { font-size: 11pt; margin: 1rem 0 .35rem; color: var(--muted); }
+    p { margin-bottom: .65rem; }
+    ul, ol { margin: 0 0 .75rem 1.35rem; }
+    li { margin-bottom: .3rem; }
+    .toc { page-break-after: always; }
+    .toc ol { list-style: none; margin-left: 0; counter-reset: toc; }
+    .toc li { counter-increment: toc; padding: .35rem 0; border-bottom: 1px dotted var(--border); }
+    .toc li::before { content: counter(toc) ". "; font-weight: 600; color: var(--accent); }
+    .callout {
+      background: var(--accent-light);
+      border-left: 4px solid var(--accent);
+      padding: .75rem 1rem; margin: 1rem 0;
+      border-radius: 0 6px 6px 0; font-size: 10.5pt;
+    }
+    .callout.warn { background: #fffbeb; border-left-color: var(--warn); }
+    .callout.success { background: #ecfdf5; border-left-color: var(--success); }
+    table {
+      width: 100%; border-collapse: collapse;
+      margin: 1rem 0; font-size: 10pt; page-break-inside: avoid;
+    }
+    th, td { border: 1px solid var(--border); padding: .45rem .6rem; text-align: left; vertical-align: top; }
+    th { background: #f8fafc; font-weight: 600; }
+    code {
+      font-family: Consolas, monospace; font-size: 9.5pt;
+      background: #f1f5f9; padding: .1em .35em; border-radius: 3px;
+    }
+    pre {
+      background: #0f172a; color: #e2e8f0;
+      padding: .85rem 1rem; border-radius: 6px;
+      font-size: 9pt; line-height: 1.45; margin: .75rem 0;
+      page-break-inside: avoid; overflow-x: auto;
+    }
+    .phase-card {
+      border: 1px solid var(--border); border-radius: 8px;
+      padding: 1rem 1.1rem; margin: 1rem 0; page-break-inside: avoid;
+    }
+    .phase-card .label {
+      display: inline-block; background: var(--accent); color: white;
+      font-size: 8.5pt; font-weight: 700; letter-spacing: .06em;
+      text-transform: uppercase; padding: .2em .6em; border-radius: 4px; margin-bottom: .5rem;
+    }
+    .checklist { list-style: none; margin-left: 0; }
+    .checklist li::before { content: "☐ "; color: var(--accent); font-weight: bold; }
+    .flow-diagram {
+      background: #f8fafc; border: 1px solid var(--border);
+      border-radius: 8px; padding: 1rem;
+      font-family: monospace; font-size: 9pt; line-height: 1.6;
+      white-space: pre; margin: 1rem 0; page-break-inside: avoid;
+    }
+    .page-break { page-break-before: always; }
+    footer.doc-footer {
+      margin-top: 3rem; padding-top: 1rem;
+      border-top: 1px solid var(--border);
+      font-size: 9pt; color: var(--muted); text-align: center;
+    }
+    @media print {
+      body { background: white; padding: 0; }
+      .document { box-shadow: none; padding: 0; max-width: none; }
+    }
+  </style>
+</head>
+<body>
+<div class="document">
+
+  <header class="cover">
+    <div class="logo">Scalemorph</div>
+    <p class="project">Frontera Scheduling API</p>
+    <h1>Backend Developer<br>Onboarding Guide</h1>
+    <p class="subtitle">
+      Training project — NestJS · TypeScript · AWS (Lambda, S3, SES) · Docker ·
+      Supabase · security · cloud document patterns · Claude Code · critical reasoning
+    </p>
+    <div class="meta">
+      <span>Repo: <code>scaleMorph/frontera</code></span>
+      <span>·</span>
+      <span>Version 2.2</span>
+      <span>·</span>
+      <span>June 2026</span>
+    </div>
+  </header>
+
+  <section class="toc">
+    <h2>Contents</h2>
+    <ol>
+      <li>Welcome — what this project is (and isn’t)</li>
+      <li>Your learning goals &amp; cloud focus areas</li>
+      <li>30-day path on Frontera</li>
+      <li>Module 1 — TypeScript &amp; NestJS on Frontera</li>
+      <li>Module 2 — Cloud: file storage (S3)</li>
+      <li>Module 3 — Cloud: compute (Docker + Serverless)</li>
+      <li>Module 4 — Cloud: messaging &amp; documents (SES, PACR, OCR concepts)</li>
+      <li>Module 5 — Security (JWT, RLS, secrets)</li>
+      <li>Module 6 — Working with Claude Code</li>
+      <li>Module 7 — Critical reasoning (don’t mind-dump on AI)</li>
+      <li>Understand → Design → Implement → Verify</li>
+      <li>Week-by-week checklist</li>
+      <li>Reading list &amp; repo map</li>
+      <li>30-day sign-off</li>
+    </ol>
+  </section>
+
+  <!-- 1 -->
+  <section>
+    <h2>1. Welcome — what this project is (and isn’t)</h2>
+    <p>
+      Welcome to <strong>Scalemorph</strong>. Your onboarding project is the
+      <strong>Frontera Scheduling API</strong> — a NestJS backend for healthcare
+      provider scheduling (onboarding, availability, time-off, approvals, calendar exports).
+    </p>
+    <p>
+      <strong>Repo path:</strong> <code>/Users/hamzajamshed/scaleMorph/frontera</code>
+      (or your team’s clone of the same repository).
+    </p>
+
+    <div class="callout success">
+      <strong>This is a training &amp; delivery project — not production QuoteLogik.</strong>
+      Frontera is where you learn our stack, contribute to a real codebase, and grow into
+      cloud-backed backend work. You will not be dropped onto a live customer system on day one.
+    </div>
+
+    <h3>What Frontera is</h3>
+    <ul>
+      <li><strong>NestJS 11 + TypeScript</strong> on Node 22</li>
+      <li><strong>Supabase Postgres</strong> + Drizzle ORM (20+ tables)</li>
+      <li><strong>AWS Serverless</strong> — Lambda + API Gateway (<code>serverless.yml</code>)</li>
+      <li><strong>AWS S3</strong> — secure document storage (PACR PDFs, exports)</li>
+      <li><strong>AWS SES</strong> — provider invite and notification email</li>
+      <li><strong>Docker Compose</strong> — local Postgres + migrate + API with hot reload</li>
+    </ul>
+
+    <h3>Day-one setup</h3>
+    <pre>cd scaleMorph/frontera
+npm run docker:up          # Postgres + migrations + seed + API on :3000
+
+# Verify
+curl http://localhost:3000/health
+open http://localhost:3000/api    # Swagger</pre>
+
+    <p>Alternative: cloud Supabase — see <code>README.md</code> Option B.</p>
+
+    <h3>Phased delivery (Q1–Q4)</h3>
+    <p>You’ll grow with the roadmap. Today’s screen-backed routes are documented in <code>docs/adr/</code>:</p>
+    <ul>
+      <li>Admin: active providers, onboard provider, master availability, schedule change approvals, PRN availability</li>
+      <li>Provider portal: scheduling submissions (PRN + set time-off)</li>
+      <li>Coming: JWT guard (Q1), PACR uploads to S3 (Q2), review queue + SES liaison (Q3), calendar export (Q4)</li>
+    </ul>
+  </section>
+
+  <!-- 2 -->
+  <section>
+    <h2>2. Your learning goals &amp; cloud focus areas</h2>
+    <table>
+      <thead>
+        <tr><th>Cloud domain</th><th>What you’ll learn</th><th>Where in Frontera</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>File storage</strong></td>
+          <td>S3 buckets, PutObject/GetObject, bucket env vars, gateway pattern</td>
+          <td><code>src/repository/aws/s3.gateway.ts</code>, <code>DOCUMENTS_BUCKET</code>, <code>EXPORTS_BUCKET</code></td>
+        </tr>
+        <tr>
+          <td><strong>Compute</strong></td>
+          <td>Container local dev vs Lambda production; shared <code>createApp()</code> bootstrap</td>
+          <td><code>docker-compose.yml</code>, <code>src/lambda.ts</code>, <code>serverless.yml</code></td>
+        </tr>
+        <tr>
+          <td><strong>Messaging / email</strong></td>
+          <td>SES identities, configuration sets, sending from Lambda IAM role</td>
+          <td><code>src/repository/aws/ses.gateway.ts</code>, invite flow docs</td>
+        </tr>
+        <tr>
+          <td><strong>Documents &amp; OCR (concepts)</strong></td>
+          <td>PACR PDF upload pipeline; later: cloud OCR patterns (read → store → link <code>documents</code> row)</td>
+          <td><code>provider-documents.service.ts</code>, <code>documents</code> table — OCR is a <em>learning module</em>, not wired yet</td>
+        </tr>
+        <tr>
+          <td><strong>Security</strong></td>
+          <td>JWT verification, RLS helpers, secrets, IDOR awareness</td>
+          <td><code>docs/api-auth.md</code>, <code>drizzle/0001_supabase_rls_functions.sql</code></td>
+        </tr>
+        <tr>
+          <td><strong>Data layer</strong></td>
+          <td>Repository pattern, migrations, seed scripts</td>
+          <td><code>src/repository/persistence/</code>, <code>drizzle/</code></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="flow-diagram">Frontera request path (local or Lambda — same Nest app)
+
+  Client (Lovable portal)
+       │  HTTPS  Authorization: Bearer &lt;supabase_jwt&gt;
+       ▼
+  API Gateway  →  Lambda (serverless-express)  →  Nest controller
+       │                                              │
+       │                                              ├─► Service (business rules)
+       │                                              ├─► Repository → Postgres
+       │                                              ├─► S3Gateway → DOCUMENTS_BUCKET
+       │                                              └─► SesGateway → SES send</div>
+  </section>
+
+  <!-- 3 -->
+  <section class="page-break">
+    <h2>3. 30-day path on Frontera — full curriculum</h2>
+    <div class="callout success">
+      <strong>Goal by day 30:</strong> grasp the <em>entire</em> onboarding curriculum — NestJS,
+      TypeScript, S3, SES, Docker, Serverless, security (JWT/RLS/secrets), document &amp; OCR
+      concepts, Claude Code workflow, and critical reasoning — then prove it via a merged PR and
+      the sign-off checklist in section 14. Every module in this document maps to a week below;
+      nothing is “for later.”
+    </div>
+
+    <h3>3.1 What you will grasp (all within 30 days)</h3>
+    <table>
+      <thead>
+        <tr><th>Topic</th><th>Module</th><th>When</th><th>Proof you got it</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>TypeScript &amp; NestJS (DI, modules, repositories)</td><td>§4</td><td>Days 1–10</td><td>Explain AdminModule wiring; run build/test/lint</td></tr>
+        <tr><td>S3 file storage &amp; gateway pattern</td><td>§5</td><td>Days 8–12</td><td>Explain PutObject flow + bucket env vars</td></tr>
+        <tr><td>Docker local stack + Serverless deploy</td><td>§6</td><td>Days 13–17</td><td>Reset Docker stack; list <code>serverless.yml</code> resources</td></tr>
+        <tr><td>SES, PACR documents, OCR concepts</td><td>§7</td><td>Days 15–19</td><td>Walk invite email path; explain sync vs async OCR</td></tr>
+        <tr><td>Security (JWT, RLS, secrets)</td><td>§8</td><td>Days 18–22</td><td>Explain Bearer token flow + two secret blast radii</td></tr>
+        <tr><td>Claude Code (effective use)</td><td>§9</td><td>Days 20–26</td><td>Show read-order + one scoped prompt you used</td></tr>
+        <tr><td>Critical reasoning (no mind-dump)</td><td>§10</td><td>Daily + §11</td><td>4 AI-free challenges + teach-back on your PR</td></tr>
+        <tr><td>Ship real code</td><td>All</td><td>Days 22–30</td><td>One merged PR you can explain line-by-line</td></tr>
+      </tbody>
+    </table>
+
+    <h3>3.2 Week-by-week sprint</h3>
+    <div class="phase-card">
+      <span class="label">Week 1 · Days 1–7 — Foundation</span>
+      <p><strong>Module 4 (NestJS).</strong> Docker up, Swagger, read <code>README.md</code> + <code>CONTEXT.md</code> + <code>docs/scheduling-workflow.md</code>. Map project layout. Trace one admin route without AI. Learn scheduling deadline + PACR rules. Daily: 15 min read-before-ask (§10).</p>
+    </div>
+    <div class="phase-card">
+      <span class="label">Week 2 · Days 8–14 — Data &amp; storage</span>
+      <p><strong>Modules 4–5.</strong> Repositories, Drizzle schema (<code>profiles</code>, <code>time_off_requests</code>, <code>documents</code>). Study <code>s3.gateway.ts</code> + <code>serverless.yml</code> buckets. AI-free challenge week 2. Pick and start first PR with lead.</p>
+    </div>
+    <div class="phase-card">
+      <span class="label">Week 3 · Days 15–21 — Cloud &amp; security</span>
+      <p><strong>Modules 6–8.</strong> Docker deep-dive (<code>docs/docker.md</code>), Lambda/<code>lambda.ts</code>, <code>npm run deploy</code> concepts. SES + <code>docs/onboarding-invite-flow.md</code>. PACR + OCR concepts (§7). <code>docs/api-auth.md</code>, RLS functions, secrets table. AI-free challenge week 3.</p>
+    </div>
+    <div class="phase-card">
+      <span class="label">Week 4 · Days 22–30 — AI discipline &amp; sign-off</span>
+      <p><strong>Modules 9–11 + ship.</strong> Claude Code read-order and scoped prompts only. Merge PR with full teach-back. AI-free challenge week 4. Complete every row in §14 sign-off with lead.</p>
+    </div>
+
+    <h3>3.3 Daily rhythm (repeat all 30 days)</h3>
+    <table>
+      <thead><tr><th>Block</th><th>Time</th><th>Activity</th></tr></thead>
+      <tbody>
+        <tr><td>Morning</td><td>30–60 min</td><td>Read assigned doc/file for this week’s module (no AI yet)</td></tr>
+        <tr><td>Midday</td><td>2–4 hrs</td><td>Hands-on: trace code, exercises, PR work</td></tr>
+        <tr><td>Afternoon</td><td>30 min</td><td>Write 3-sentence summary of what you learned (your words)</td></tr>
+        <tr><td>Before PR</td><td>15 min</td><td>Teach-back gate (§10.2) — mandatory</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- 4 -->
+  <section>
+    <h2>4. Module 1 — TypeScript &amp; NestJS on Frontera <em>(days 1–10)</em></h2>
+    <h3>4.1 Project layout</h3>
+    <pre>src/
+  main.ts, lambda.ts       # HTTP + Lambda entry (shared createApp)
+  config/                  # TOKENS, AppConfigModule
+  admin/                   # Corporate admin modules
+  provider/                # Provider portal modules
+  scheduling/              # Core domain (grows Q1–Q4)
+  repository/
+    persistence/           # Drizzle schema + repositories
+    aws/                   # S3, SES gateways + AwsModule
+drizzle/                   # SQL migrations
+serverless.yml             # AWS deploy
+docker-compose.yml         # Local stack</pre>
+
+    <h3>4.2 Patterns we enforce</h3>
+    <table>
+      <thead><tr><th>Pattern</th><th>Rule</th></tr></thead>
+      <tbody>
+        <tr><td>DI</td><td>Inject via <code>TOKENS</code> in <code>src/config/tokens.ts</code></td></tr>
+        <tr><td>Controllers</td><td>Thin — DTO in, service call, response out</td></tr>
+        <tr><td>Repositories</td><td>All Postgres in <code>repository/persistence/</code></td></tr>
+        <tr><td>AWS</td><td>All SDK calls in <code>repository/aws/</code> — never <code>new S3Client()</code> in domain services</td></tr>
+        <tr><td>Config</td><td><code>AppConfigService</code> or constructor <code>readonly</code> fields from <code>ConfigService</code></td></tr>
+        <tr><td>Errors</td><td>Nest exceptions + <code>src/common/errors/</code> where used</td></tr>
+      </tbody>
+    </table>
+
+    <h3>4.3 Week 1 exercises</h3>
+    <ul class="checklist">
+      <li>Call <code>GET /admin/providers</code> and <code>GET /health</code> from Swagger</li>
+      <li>Draw module diagram: <code>AdminModule</code> → which services → which repositories</li>
+      <li>Explain scheduling deadline rule (last Tuesday of M−2) in your own words</li>
+      <li>Run <code>npm run build && npm test && npm run lint</code></li>
+    </ul>
+  </section>
+
+  <!-- 5 -->
+  <section class="page-break">
+    <h2>5. Module 2 — Cloud: file storage (S3) <em>(days 8–12)</em></h2>
+    <p>
+      Frontera uses <strong>AWS S3</strong> for secure documents (PACR PDFs in Q2+) and export
+      artifacts (Q4). Buckets are provisioned in <code>serverless.yml</code>:
+    </p>
+    <ul>
+      <li><code>frontera-{stage}-secure-documents</code> → <code>DOCUMENTS_BUCKET</code></li>
+      <li><code>frontera-{stage}-exports</code> → <code>EXPORTS_BUCKET</code></li>
+    </ul>
+
+    <h3>5.1 Gateway pattern</h3>
+    <p><code>S3Gateway</code> wraps the AWS SDK v3 client. Domain services depend on <code>IAwsS3Gateway</code>, not the SDK directly — same pattern you’ll use for any future OCR result storage.</p>
+    <pre>// Mental model
+provider-documents.service
+  → S3Gateway.putObject({ bucket, key, body, contentType })
+  → documents row in Postgres (metadata + S3 key)</pre>
+
+    <h3>5.2 Concepts to master</h3>
+    <ul>
+      <li>Bucket vs key vs region</li>
+      <li>IAM permissions on Lambda role (<code>PutObject</code>, <code>GetObject</code>)</li>
+      <li>Pre-signed URLs (future download flows)</li>
+      <li>Never expose bucket credentials to the browser — server uploads only</li>
+    </ul>
+
+    <h3>5.3 Exercises</h3>
+    <ul class="checklist">
+      <li>Read <code>s3.gateway.ts</code> and <code>s3.interface.ts</code> — list what’s missing for GetObject</li>
+      <li>Trace <code>provider-documents.service.ts</code> (if present) or read Q2 notes in CONTEXT.md</li>
+      <li>Find bucket names in <code>serverless.yml</code> and match to <code>.env.example</code></li>
+      <li>Write 3 failure modes for an upload (network, IAM, wrong bucket) and expected behaviour</li>
+    </ul>
+  </section>
+
+  <!-- 6 -->
+  <section>
+    <h2>6. Module 3 — Cloud: compute (Docker + Serverless) <em>(days 13–17)</em></h2>
+
+    <h3>6.1 Docker — local development</h3>
+    <pre>postgres:16  →  migrate (db:migrate + seed)  →  api (nest start --watch)
+                      ↑                                    |
+                      └──── DATABASE_URL (no SSL) ─────────┘</pre>
+    <p>See <code>docs/docker.md</code>. Only <code>./src</code> is bind-mounted — rebuild image after <code>package.json</code> changes.</p>
+
+    <h3>6.2 Serverless — production</h3>
+    <ul>
+      <li>Service: <code>frontera-scheduling</code></li>
+      <li>Function: <code>api</code> → <code>dist/src/lambda.handler</code></li>
+      <li>Runtime: Node 22, timeout 300s, HTTP API <code>{proxy+}</code></li>
+      <li>Deploy: <code>npm run deploy</code> (build + serverless deploy)</li>
+    </ul>
+
+    <h3>6.3 Docker vs Serverless — when to use which</h3>
+    <table>
+      <thead><tr><th>Docker (local / optional host)</th><th>Lambda (deployed API)</th></tr></thead>
+      <tbody>
+        <tr><td>Fast iteration, hot reload</td><td>Production, scales with API Gateway</td></tr>
+        <tr><td>Full control over process</td><td>Pay per request; cold starts possible</td></tr>
+        <tr><td>Postgres in container</td><td>Connects to Supabase pooler in cloud</td></tr>
+        <tr><td>Good for learning &amp; integration tests</td><td>Same Nest code via <code>lambda.ts</code></td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout">
+      <strong>Future async work:</strong> bulk calendar export or heavy email batches should become
+      enqueue → <strong>202 Accepted</strong> → consumer Lambda (SQS). Don’t block the API Lambda
+      on long jobs. <code>SQS_QUEUE_URL</code> is reserved in <code>.env.example</code> but not wired yet.
+    </div>
+
+    <h3>6.4 Exercises</h3>
+    <ul class="checklist">
+      <li>Run <code>npm run docker:reset</code> once — understand migrate + seed</li>
+      <li>Open <code>src/lambda.ts</code> and <code>src/main.ts</code> — find shared <code>createApp()</code></li>
+      <li>Skim <code>serverless.yml</code> — list every AWS resource it creates</li>
+      <li>Explain in writing: what breaks if <code>FRONTERA_AWS_REGION</code> doesn’t match deploy region</li>
+    </ul>
+  </section>
+
+  <!-- 7 -->
+  <section class="page-break">
+    <h2>7. Module 4 — Messaging, documents &amp; OCR concepts <em>(days 15–19)</em></h2>
+
+    <h3>7.1 SES (email)</h3>
+    <p>Provider invites and liaison notifications go through <code>SesGateway</code>. Deploy creates SES identity for <code>SES_FROM_EMAIL</code>. Read <code>docs/onboarding-invite-flow.md</code>.</p>
+    <pre>Invite flow (simplified)
+  Admin creates invite
+    → Nest renders HTML email (templates/)
+    → SES sends with link to FRONTERA_API_PUBLIC_URL/accept-invite
+    → Provider sets password via Supabase Auth</pre>
+
+    <h3>7.2 PACR documents (Q2)</h3>
+    <p>Post-deadline schedule changes require a <strong>PACR PDF</strong>. Backend must validate <code>pacr_document_id</code>, store file in S3, link <code>documents</code> table. This is your <strong>document pipeline</strong> exercise — upload, metadata, authorization.</p>
+
+    <h3>7.3 OCR — learning path (not in Frontera yet)</h3>
+    <p>Frontera does not call Azure/Textract today. As a Scalemorph developer you should still understand cloud OCR for other projects:</p>
+    <table>
+      <thead><tr><th>Concept</th><th>Typical pattern</th><th>Relates to Frontera when…</th></tr></thead>
+      <tbody>
+        <tr><td>Submit document</td><td>POST bytes to cloud OCR API</td><td>Auto-extract PACR fields (future)</td></tr>
+        <tr><td>Async poll</td><td>202 + Operation-Location → poll until done</td><td>Large PDFs can’t block HTTP</td></tr>
+        <tr><td>Store text</td><td>Persist in DB or object metadata</td><td>Searchable document audit trail</td></tr>
+        <tr><td>Sync vs queue</td><td>Inline in request vs SQS worker</td><td>Same trade-off as calendar export</td></tr>
+      </tbody>
+    </table>
+    <p><strong>Stretch exercise (offline):</strong> read Azure Document Intelligence or AWS Textract “analyze document” docs and write a 1-page comparison — no code required in Frontera repo.</p>
+  </section>
+
+  <!-- 8 -->
+  <section>
+    <h2>8. Module 5 — Security (JWT, RLS, secrets) <em>(days 18–22)</em></h2>
+
+    <h3>8.1 Authentication (Q1 — read now, implement soon)</h3>
+    <p>Supabase Auth issues JWT → Lovable sends <code>Authorization: Bearer &lt;token&gt;</code> → Nest guard verifies via <code>SUPABASE_JWT_SECRET</code> or JWKS. Full detail: <code>docs/api-auth.md</code>.</p>
+    <div class="callout warn">
+      Routes are <strong>open in local dev</strong> until the guard ships. Always design services
+      assuming <code>userId</code> and role will be on the request — don’t bake in “no auth forever”.
+    </div>
+
+    <h3>8.2 Row-level security (Postgres)</h3>
+    <p>RLS helpers in <code>drizzle/0001_supabase_rls_functions.sql</code>: <code>has_role</code>, <code>get_user_org_ids</code>, <code>is_assigned_to</code>, <code>log_audit</code>. Nest uses pooler connection — repository queries must still respect org/site scope when guard is live.</p>
+
+    <h3>8.3 Secrets — never commit</h3>
+    <table>
+      <thead><tr><th>Variable</th><th>Risk if leaked</th></tr></thead>
+      <tbody>
+        <tr><td><code>DATABASE_URL</code></td><td>Full database access</td></tr>
+        <tr><td><code>SUPABASE_JWT_SECRET</code></td><td>Forged tokens</td></tr>
+        <tr><td><code>SUPABASE_SERVICE_ROLE_KEY</code></td><td>Bypass all RLS</td></tr>
+        <tr><td><code>AWS_ACCESS_KEY_ID</code> / profile</td><td>S3/SES abuse, deploy rights</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- 9 -->
+  <section class="page-break">
+    <h2>9. Module 6 — Working with Claude Code <em>(days 20–26)</em></h2>
+    <p>Claude Code / Cursor agents are part of how Scalemorph works — on <strong>Fontera</strong>, point them at the right docs first.</p>
+
+    <h3>9.1 Read order before asking Claude to code</h3>
+    <ol>
+      <li><code>CONTEXT.md</code> (Frontera repo)</li>
+      <li><code>docs/scheduling-workflow.md</code></li>
+      <li>Relevant <code>docs/adr/000N-*.md</code> for your feature</li>
+      <li><code>CLAUDE.md</code> — stack conventions (note: some lines may still reference other projects; trust <code>CONTEXT.md</code> for Frontera)</li>
+    </ol>
+
+    <h3>9.2 Good vs poor use</h3>
+    <table>
+      <thead><tr><th>Good</th><th>Poor</th></tr></thead>
+      <tbody>
+        <tr><td>“Explain <code>schedule-change-approvals.service.ts</code> flow” after you read it</td><td>“Build Q3 review queue” with no ADR context</td></tr>
+        <tr><td>Generate DTO + test scaffold; you fill business rules</td><td>Ship generated scheduling deadline logic unchecked</td></tr>
+        <tr><td>“Add PutObject to S3Gateway matching existing style”</td><td>“Add AWS” with new patterns that bypass gateway</td></tr>
+      </tbody>
+    </table>
+
+    <h3>9.3 Frontera-specific prompt examples</h3>
+    <pre>"Read docs/adr/0006-schedule-change-approvals.md and list
+ which repository methods the service calls."
+
+"In s3.gateway.ts add getObject returning Buffer — match putObject
+ style, no new dependencies."
+
+"Review my diff for secrets in logs and missing work_site_id scoping."</pre>
+  </section>
+
+  <!-- 10 -->
+  <section>
+    <h2>10. Module 7 — Critical reasoning (don’t mind-dump on AI) <em>(daily, all 30 days)</em></h2>
+    <p>AI makes you fast; it does not make you correct. On Frontera, wrong scheduling rules or leaked PACR paths have real compliance implications — you must understand what you ship.</p>
+
+    <h3>10.1 Daily habits (15–30 min)</h3>
+    <table>
+      <thead><tr><th>Habit</th><th>Action</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Read before ask</strong></td><td>3-sentence summary of a file before Claude explains it</td></tr>
+        <tr><td><strong>Predict before run</strong></td><td>Write expected API response; compare to Swagger/curl</td></tr>
+        <tr><td><strong>Explain aloud</strong></td><td>Weekly: explain invite flow or deadline rule without notes</td></tr>
+        <tr><td><strong>Bug journal</strong></td><td>Expected / actual / hypothesis / fix — you write it</td></tr>
+      </tbody>
+    </table>
+
+    <h3>10.2 Frameworks</h3>
+    <h4>5 Whys (example)</h4>
+    <ol>
+      <li>Why was time-off rejected? → Missing PACR</li>
+      <li>Why required? → Past scheduling deadline</li>
+      <li>Who enforces deadline? → Nest service (not frontend alone)</li>
+      <li>What date logic? → Last Tuesday of M−2</li>
+      <li>Where is helper? → Find it in codebase before changing</li>
+    </ol>
+
+    <h4>Teach-back gate (before every PR)</h4>
+    <ul>
+      <li>What user role can call this endpoint?</li>
+      <li>Which tables change?</li>
+      <li>What happens on validation failure?</li>
+      <li>How did you test without AI writing the test for you?</li>
+    </ul>
+
+    <h3>10.3 AI-free weekly rotation (4 weeks)</h3>
+    <table>
+      <thead><tr><th>Week</th><th>Challenge</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>Trace <code>GET /admin/onboarding/form-options</code> with grep only</td></tr>
+        <tr><td>2</td><td>Fix a type error without autocomplete; explain deadline rule aloud</td></tr>
+        <tr><td>3</td><td>Read <code>serverless.yml</code> and draw AWS resources on paper</td></tr>
+        <tr><td>4</td><td>Teach-back on your PR diff with zero AI — every line explained</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- 11 -->
+  <section class="page-break">
+    <h2>11. Understand → Design → Implement → Verify</h2>
+    <div class="flow-diagram">┌─────────────┐    ┌─────────────┐    ┌─────────────┐    ┌─────────────┐
+│ UNDERSTAND  │───►│   DESIGN    │───►│ IMPLEMENT   │───►│   VERIFY    │
+│ (human-led) │    │ (human-led) │    │ (AI-assisted)│   │ (human-led) │
+└─────────────┘    └─────────────┘    └─────────────┘    └─────────────┘
+ Read ADR + schema   Interfaces,        Small PRs,          build/test/lint
+ Reproduce in Docker  deadline rules      gateway pattern      curl + Swagger
+ Ask "what if?"       on paper            match Frontera style teach-back</div>
+    <div class="callout">
+      <strong>Rule:</strong> AI may help in <em>Implement</em> only if you fully own the other three stages.
+    </div>
+  </section>
+
+  <!-- 12 -->
+  <section>
+    <h2>12. Week-by-week checklist — complete everything in 30 days</h2>
+    <h3>Week 1 — Foundation · Module 4 (days 1–7)</h3>
+    <ul class="checklist">
+      <li><code>npm run docker:up</code> — health + Swagger working</li>
+      <li>Read <code>README.md</code>, <code>CONTEXT.md</code>, <code>docs/scheduling-workflow.md</code></li>
+      <li>Explain scheduling deadline + PACR rule in your own words</li>
+      <li>Trace one admin route end-to-end — AI-free (challenge week 1)</li>
+      <li>Run <code>npm run build && npm test && npm run lint</code></li>
+      <li>1:1 with lead — confirm full 30-day curriculum plan</li>
+    </ul>
+    <h3>Week 2 — Data &amp; storage · Modules 4–5 (days 8–14)</h3>
+    <ul class="checklist">
+      <li>Map <code>src/admin/</code> + <code>src/provider/</code> → services → repositories</li>
+      <li>Study <code>schema.ts</code> for <code>profiles</code>, <code>time_off_requests</code>, <code>documents</code></li>
+      <li>Complete Module 5 exercises (<code>s3.gateway.ts</code>, buckets in <code>serverless.yml</code>)</li>
+      <li>AI-free challenge week 2 (type fix + deadline explain aloud)</li>
+      <li>First PR opened with lead-approved scope</li>
+    </ul>
+    <h3>Week 3 — Cloud &amp; security · Modules 6–8 (days 15–21)</h3>
+    <ul class="checklist">
+      <li>Complete Module 6 exercises (Docker reset, <code>lambda.ts</code>, serverless resource list)</li>
+      <li>Complete Module 7 (SES invite flow + OCR sync vs async write-up)</li>
+      <li>Complete Module 8 (<code>api-auth.md</code>, RLS helpers, four secrets table)</li>
+      <li>AI-free challenge week 3 (draw AWS resources from <code>serverless.yml</code>)</li>
+      <li>PR in review — every changed line explainable</li>
+    </ul>
+    <h3>Week 4 — AI discipline &amp; sign-off · Modules 9–11 (days 22–30)</h3>
+    <ul class="checklist">
+      <li>Apply Module 9 Claude Code workflow on your PR (read-order + scoped prompts)</li>
+      <li>Daily critical-reasoning habit maintained (Module 10)</li>
+      <li>AI-free challenge week 4 (teach-back PR with zero AI)</li>
+      <li>PR merged</li>
+      <li>Every row in §14 30-day sign-off ticked with lead</li>
+    </ul>
+  </section>
+
+  <!-- 13 -->
+  <section>
+    <h2>13. Reading list &amp; repo map</h2>
+    <h3>Read in this order</h3>
+    <ol>
+      <li><code>README.md</code></li>
+      <li><code>CONTEXT.md</code></li>
+      <li><code>docs/scheduling-workflow.md</code></li>
+      <li><code>docs/docker.md</code></li>
+      <li><code>docs/api-auth.md</code></li>
+      <li><code>docs/onboarding-invite-flow.md</code></li>
+      <li><code>docs/adr/0002-scheduling-workflow-backend-shape.md</code></li>
+      <li><code>.env.example</code></li>
+      <li><code>serverless.yml</code></li>
+      <li><code>src/repository/persistence/db/schema.ts</code></li>
+      <li><code>src/repository/aws/</code></li>
+    </ol>
+    <h3>External references</h3>
+    <ul>
+      <li>NestJS — modules, providers, guards</li>
+      <li>Drizzle ORM — schema, migrations</li>
+      <li>AWS S3 SDK v3 — PutObject, GetObject</li>
+      <li>AWS SES — SendEmail, domain verification</li>
+      <li>Serverless Framework — Lambda + HTTP API</li>
+      <li>Docker Compose — multi-service local stacks</li>
+    </ul>
+  </section>
+
+  <!-- 14 -->
+  <section class="page-break">
+    <h2>14. 30-day sign-off — full curriculum</h2>
+    <p>All items required by day 30. This is the bar for “grasped everything” in this guide.</p>
+    <table>
+      <thead><tr><th>Area</th><th>Demonstration</th><th>Done</th></tr></thead>
+      <tbody>
+        <tr><td>Frontera domain</td><td>Explain scheduling deadline + PACR rule without notes</td><td>☐</td></tr>
+        <tr><td>NestJS</td><td>Small feature using TOKENS + repository pattern</td><td>☐</td></tr>
+        <tr><td>Docker</td><td>Reset stack, explain postgres → migrate → api</td><td>☐</td></tr>
+        <tr><td>S3</td><td>Explain gateway pattern and bucket env vars</td><td>☐</td></tr>
+        <tr><td>Serverless</td><td>Describe what <code>npm run deploy</code> provisions</td><td>☐</td></tr>
+        <tr><td>SES</td><td>Walk through provider invite email path</td><td>☐</td></tr>
+        <tr><td>Security</td><td>Explain JWT flow + name two secrets and their blast radius</td><td>☐</td></tr>
+        <tr><td>OCR (concepts)</td><td>Explain sync vs async document processing trade-offs</td><td>☐</td></tr>
+        <tr><td>AI discipline</td><td>PR where you explain every changed line</td><td>☐</td></tr>
+        <tr><td>Reasoning</td><td>One AI-free weekly challenge + one teach-back</td><td>☐</td></tr>
+      </tbody>
+    </table>
+    <br><br>
+    <table>
+      <tr>
+        <td style="width:50%"><strong>Developer</strong><br><br>_______________________</td>
+        <td><strong>Date</strong><br><br>_______________________</td>
+      </tr>
+      <tr>
+        <td><strong>Lead (Hamza)</strong><br><br>_______________________</td>
+        <td><strong>Sign-off date</strong><br><br>_______________________</td>
+      </tr>
+    </table>
+  </section>
+
+  <footer class="doc-footer">
+    Scalemorph — Frontera Developer Onboarding v2.2 · <code>scaleMorph/frontera</code> · June 2026
+  </footer>
+
+</div>
+</body>
+</html>

@@ -42,13 +42,13 @@ Architectural choices: [ADR-0002](./adr/0002-scheduling-workflow-backend-shape.m
 | **FE** | `CorporateOnboardProvider.tsx` |
 | **Goal** | Profile + sites + weekly pattern + recruiter + liaison |
 | **Writes** | `profiles`, `provider_work_sites`, `user_roles`, `provider_invites` (invite flow) |
-| **Side effects** | HTML invite email (SES) with link → Lovable `/accept-invite` password form → Supabase Auth |
+| **Side effects** | HTML invite email (SES) → Nest `/accept-invite` password page → Supabase sign-in on Lovable portal |
 
 | API (planned) | Status |
 |---------------|--------|
 | `POST /admin/onboarding` | Stub (`OnboardingModule`) |
 | `POST /admin/onboarding/:userId/invite` | Stub (SES HTML email + link, not form in email) |
-| Accept-invite + password | Lovable form + Supabase Auth; optional Nest finalize — see [onboarding-invite-flow.md](./onboarding-invite-flow.md) |
+| Accept-invite + password | Nest HTML `GET/POST /accept-invite` — see [onboarding-invite-flow.md](./onboarding-invite-flow.md) |
 
 ---
 
@@ -63,9 +63,11 @@ Architectural choices: [ADR-0002](./adr/0002-scheduling-workflow-backend-shape.m
 
 | API (planned) | Status |
 |---------------|--------|
-| `POST /provider/scheduling/availability/submit` (PRN batch) | Stub |
+| `GET /provider/:providerId/scheduling/context` | **Built** ([0009](./adr/0009-provider-availability-calendar.md)) |
+| `GET /provider/:providerId/scheduling/availability` | **Built** |
+| `POST /provider/:providerId/scheduling/availability/submit` (PRN batch) | **Built** |
+| `POST /provider/:providerId/documents/upload` (PACR) | **Built** |
 | `POST /provider/scheduling/time-off` | Stub |
-| `POST /provider/documents/upload` (PACR) | Stub |
 | `GET /admin/documents/:id/download` (signed URL) | Stub |
 
 **PDF edge fn names → Nest:** `submit-availability` → submit endpoints above.
@@ -76,7 +78,7 @@ Architectural choices: [ADR-0002](./adr/0002-scheduling-workflow-backend-shape.m
 
 | | |
 |--|--|
-| **FE** | `CorporateTimeOffReview.tsx`, `CorporatePTOCalendar.tsx`, `CorporateAvailabilityCalendar.tsx`, `CorporatePRNAvailability.tsx` |
+| **FE** | `CorporateTimeOffReview.tsx`, `CorporatePTOCalendar.tsx`, `CorporateAvailabilityCalendar.tsx`, `CorporatePRNAvailability.tsx`, **Master Availability Calendar** |
 | **Queue** | `pending_review`, filters: recruiter, facility, region, employment_type, schedule_type, dates |
 | **Row UI** | Provider, dates, hours impact, PACR download, warning badges |
 | **Approve** | Confirm if thresholds → `approved`, `reviewed_by`, `reviewed_at` |
@@ -174,6 +176,7 @@ stateDiagram-v2
 | Q3 | POST | `/admin/scheduling/requests/:id/approve` | 3 |
 | Q3 | POST | `/admin/scheduling/requests/:id/deny` | 3 |
 | Q3 | GET | `/admin/scheduling/calendars/...` | 3 |
+| Q3 | GET | `/admin/master-availability/*` | 3 — [ADR-0005](./adr/0005-master-availability-calendar.md) |
 | Q4 | POST | `/admin/scheduling/finalize-month` | 4 |
 | Q4 | POST | `/admin/scheduling/exports/ace-imo` | 3–4 |
 | Q5 | GET | `/provider/scheduling/schedule` | 5 |
